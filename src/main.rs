@@ -1,17 +1,22 @@
-//tutorial-setup-01.rs
-// Import the standard library's I/O module so we can read from stdin.
+//tutorial-error-04.rs
+use std::error::Error;
 use std::io;
+use std::process;
 
-// The `main` function is where your program starts executing.
 fn main() {
-    // Create a CSV parser that reads data from stdin.
+    if let Err(err) = run() {
+        println!("{}", err);
+        process::exit(1);
+    }
+}
+
+fn run() -> Result<(), Box<dyn Error>> {
     let mut rdr = csv::Reader::from_reader(io::stdin());
-    // Loop over each record.
     for result in rdr.records() {
-        // An error may occur, so abort the program in an unfriendly way.
-        // We will make this more friendly later!
-        let record = result.expect("a CSV record");
-        // Print a debug version of the record.
+        // This is effectively the same code as our `match` in the
+        // previous example. In other words, `?` is syntactic sugar.
+        let record = result?;
         println!("{:?}", record);
     }
+    Ok(())
 }
